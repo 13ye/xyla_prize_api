@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<head>
+<title>Bravo!</title>
+<script type="text/javascript">
+	function add_id(add){
+		var n = document.getElementById("love");
+		n.innerHTML = parseInt(n.innerHTML)+1;
+	}
+</script>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to dome!</h1>
+<p> good!</p>
+
+<p><em>Please Click to Bless.</em></p>
+<Button onClick="add_id(1)">Bless us</Button>
+<span id="love">999</span>
+<p></p>
+
+<span>
+ <img src = "images/will1.gif" alt = "William gif" width = "200" height = "200"/>
+ <img src = "images/ben1.gif" alt = "Bent gif" width = "200" height = "200"/>
+</span>
+
+<!--<video width="320" height="240" controls>-->
+<!--  <source src="videos/test.mp4" type=video/mp4> -->
+<!--</video>-->
+
+<script language="javascript" type="text/javascript">
+
+	const key_name_map = {"shoes":"鞋子","clothes":"衣服","pants":"裤子","hats":"帽子"};
+
+	function get_prizes(){
+		fetch("http://localhost:88888/prizes",{
+			method:"GET",
+			header:{
+				"Content-Type":"application/json",
+			},
+		}).then((res)=>{
+			return res.json()
+		}).then((res)=>{
+			console.log(res)
+			let keys = Object.keys(res["prizes"])
+			let x = document.getElementById("prizes");
+			// 1. remove all children of x
+			while(x.hasChildNodes()) //当elem下还存在子节点时 循环继续
+			    {
+				x.removeChild(x.firstChild);
+			    }
+			//x.innerHtml = "";
+			for (let key of keys){
+				if(res["prizes"][key]<=0){
+					continue
+				}
+				console.log("keys:::",key);
+				let y = gen_item(key, key_name_map[key])
+
+				x.appendChild(y);
+			}
+			console.log(x);
+		}).catch((err)=>{
+			console.error(err);
+		})
+	}
+
+	function gen_item(name, name_china){
+		let div = document.createElement("div")
+		div.setAttribute("style","width:500px; margin-top:50px; margin-bottom:50px; text-align:center; background-color:#b387ff")
+		let p = document.createElement("p")
+		p.innerText = "有效期 @ [2021.05.20, ∞]"
+		let div2 = document.createElement("div")
+		div2.setAttribute("style","text-align:center; background-color:#b387ff")
+		let p2 = document.createElement("p")
+		p2.innerText = name_china+"券 ( "+name+"-ticket )"
+		let span = document.createElement("span")
+		let image = document.createElement("img")
+		image.setAttribute("src","images/"+name+".png")
+		image.setAttribute("alt",name)
+		image.setAttribute("width","200")
+		image.setAttribute("height","200")
+		span.appendChild(image)
+		div2.appendChild(p2)
+		div2.appendChild(span)
+		let button = document.createElement("button")
+		button.setAttribute("style","font-size:22px")
+		button.setAttribute("name",name)
+		button.setAttribute("onclick","post(this.name)")
+		button.innerText = "使用";
+		div.appendChild(p)
+		div.appendChild(div2)
+		div.appendChild(button)
+		return div
+	}
+
+	// 跳出弹窗,输入正确则更新后台
+	function post(params){
+		var person = prompt("请输入您的姓名", "x");
+		if (person === "whatwaht") {
+			alert("smart ^_^");
+            fetch("http://localhost:88888/prizes?name="+params,{
+				method: 'POST',
+				headers:{
+					'Content-Type':'application/json',
+				},
+			}).then((res)=>{
+				console.log(res)
+				get_prizes();
+			}).catch((err)=>{
+				console.error(err)
+			})
+
+		}else{
+			alert("wrong :-)");
+		}
+	    }
+
+	get_prizes();
+</script>
+
+<!--<iframe  style="height:200px width:400px" src="shoes.html"></iframe>-->
+<!--
+	<div style="width:500px; text-align:center; background-color:#b387ff "> 
+		<p> 有效期: [2021.05.20, ∞]</p>
+		<div style="text-align:center; background-color:#b387ff ">
+			<p>鞋子券(shoes ticket)</p>
+			<span> <img src = "images/shoes.png" alt="shoes" width="200" height="200"/> </span>
+		</div>
+		<button style="font-size:22px" name="shoes" onclick="post(this.name)">使用</button>
+	</div>
+-->
+
+<!--<button onclick="get_prizes()">刷新刷新</button>-->
+<div id="prizes"></div>
+</body>
+</html>
