@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title>My First Program with Error</title>
+</head>
+
+<body>
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+ 
+<script language = "javascript" type = "text/javascript">
+    var constName = "shoes";
+    function post(params){
+        fetch("http://localhost:12345/prizes?name="+params,{
+            method: 'POST',
+            headers:{
+                'Content-Type':'application/json',
+            },
+        }).then((res)=>{
+            console.log(res)
+        }).catch((err)=>{
+            console.error(err)
+        })
+    }
+
+    function get(){
+        fetch("http://localhost:12345/prizes",{
+            method: 'GET',
+            headers:{
+                'Content-Type':'application/json',
+            },
+        }).then((res)=>{
+            return res.json()
+        }).then((res)=>{
+            console.log(res)
+            let keys = Object.keys(res["prizes"])
+            for(let key of keys){
+                console.log("key:::",key)
+            }
+        }).catch((err)=>{
+            console.error(err)
+        })
+    }
+
+</script>
+<button onclick="post(constName)">Update</button>
+<button onclick="get()">GET</button>
+</body>
+</html>
